@@ -30,7 +30,8 @@
 			});
 
 			if (response.ok) {
-				await loadArticles();
+				const updatedArticle = await response.json();
+				articles = articles.map((article) => (article.id === id ? updatedArticle : article));
 			} else {
 				message = 'Error voting for article';
 			}

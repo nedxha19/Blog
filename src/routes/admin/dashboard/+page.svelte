@@ -3,12 +3,13 @@
 
 	let articles = [];
 	let newArticle = {
-		image: '',
+		image: null,
 		description: '',
 		author: ''
 	};
 	let message = '';
 	let isAdmin = false;
+	let previewUrl = '';
 
 	onMount(async () => {
 		isAdmin = localStorage.getItem('admin') === 'true';
@@ -32,17 +33,20 @@
 
 	async function addArticle() {
 		try {
+			const formData = new FormData();
+			formData.append('image', newArticle.image);
+			formData.append('description', newArticle.description);
+			formData.append('author', newArticle.author);
+
 			const response = await fetch('/api/articles', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(newArticle)
+				body: formData
 			});
 
 			if (response.ok) {
 				message = 'Article added successfully';
-				newArticle = { image: '', description: '', author: '' };
+				newArticle = { image: null, description: '', author: '' };
+				previewUrl = '';
 				await loadArticles();
 			} else {
 				message = 'Error adding article';
@@ -68,6 +72,14 @@
 			message = 'Error deleting article';
 		}
 	}
+
+	function handleImageChange(event) {
+		const file = event.target.files[0];
+		if (file) {
+			newArticle.image = file;
+			previewUrl = URL.createObjectURL(file);
+		}
+	}
 </script>
 
 <div class="min-h-screen bg-gray-100 p-8">
@@ -89,14 +101,18 @@
 				<h2 class="mb-4 text-xl font-semibold">Add New Article</h2>
 				<form on:submit|preventDefault={addArticle} class="space-y-4">
 					<div>
-						<label for="image" class="block text-sm font-medium text-gray-700">Image URL</label>
+						<label for="image" class="block text-sm font-medium text-gray-700">Image</label>
 						<input
 							id="image"
-							type="text"
-							bind:value={newArticle.image}
+							type="file"
+							accept="image/*"
+							on:change={handleImageChange}
 							required
-							class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+							class="mt-1 block w-full"
 						/>
+						{#if previewUrl}
+							<img src={previewUrl} alt="" class="mt-2 h-32 w-32 rounded object-cover" />
+						{/if}
 					</div>
 					<div>
 						<label for="description" class="block text-sm font-medium text-gray-700"
