@@ -1,74 +1,56 @@
 <script>
-	let email = '';
-	let password = '';
-	let message = '';
-
-	const handleSubmit = async (event) => {
-		event.preventDefault();
-
-		try {
-			const response = await fetch('/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-				body: new URLSearchParams({
-					email,
-					password
-				})
-			});
-
-			const result = await response.json();
-			message = result.message;
-
-			if (response.ok) {
-				localStorage.setItem('username', result.username);
-				window.location.href = '/';
-			}
-		} catch (error) {
-			message = 'An error occurred during login. Please try again.';
-		}
-	};
+	import { enhance } from '$app/forms';
+	export let form;
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-gray-100">
-	<form class="w-full max-w-sm rounded-lg bg-white p-6 shadow-md" on:submit={handleSubmit}>
-		<h2 class="mb-6 text-center text-2xl font-bold">Login</h2>
-		{#if message}
-			<p class="mb-4 text-red-600">{message}</p>
-		{/if}
-		<div class="mb-4">
-			<label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email:</label>
-			<input
-				type="email"
-				id="email"
-				bind:value={email}
-				required
-				class="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-			/>
+<div
+	class="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-500 to-blue-700"
+>
+	<div class="mb-4 w-full max-w-md rounded-xl bg-white p-10 shadow-2xl">
+		<div class="mb-8 text-center">
+			<h1 class="text-4xl font-bold tracking-tight text-gray-800">ShkodraWeb</h1>
+			<p class="mt-2 text-gray-600">Secure access to your account</p>
 		</div>
-		<div class="mb-4">
-			<label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password:</label>
-			<input
-				type="password"
-				id="password"
-				bind:value={password}
-				required
-				class="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-			/>
-		</div>
-		<button
-			type="submit"
-			class="w-full rounded bg-blue-500 py-2 font-medium text-white transition-colors hover:bg-blue-600"
-		>
-			Login
-		</button>
-		<div class="mt-4 text-center">
-			<p class="text-sm text-gray-600">
-				Don't have an account? <a href="/register" class="text-blue-500 hover:underline"
-					>Register here</a
+
+		<!-- No query string on the form: the default action is used -->
+		<form method="POST" use:enhance>
+			<div class="mb-6">
+				<label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email address</label
 				>
-			</p>
-		</div>
-	</form>
+				<input
+					type="email"
+					name="email"
+					id="email"
+					required
+					class="w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+					placeholder="you@example.com"
+				/>
+			</div>
+
+			<div class="mb-6">
+				<label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password</label>
+				<input
+					type="password"
+					name="password"
+					id="password"
+					required
+					class="w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+					placeholder="••••••••"
+				/>
+			</div>
+
+			<div class="mb-6">
+				<button
+					type="submit"
+					class="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				>
+					Sign in
+				</button>
+			</div>
+
+			{#if form}
+				<div class="text-red-500">{form.message}</div>
+			{/if}
+		</form>
+	</div>
 </div>

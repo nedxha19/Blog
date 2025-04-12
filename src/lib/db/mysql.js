@@ -1,26 +1,16 @@
-// src/lib/db/mysql.js
 import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
+import { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } from '$env/static/private';
 
-dotenv.config();
+let connection = null;
 
 export async function createConnection() {
-    const connection = await mysql.createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-    });
+    if (!connection) {
+        connection = await mysql.createConnection({
+            host: DB_HOST,
+            user: DB_USER,
+            password: DB_PASSWORD,
+            database: DB_NAME
+        });
+    }
     return connection;
-}
-
-export async function validateUser(email, password) {
-    const connection = await createConnection();
-
-    // You might want to hash your passwords in production for security
-    const [rows] = await connection.execute(
-        'SELECT * FROM users WHERE email = ? AND password = ?',
-        [email, password]
-    );
-    return rows.length > 0 ? rows[0] : null;
 }

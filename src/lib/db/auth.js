@@ -1,45 +1,59 @@
-// src/lib/db/auth.js
 import { createConnection } from './mysql';
 import bcrypt from 'bcrypt';
-
-export async function register(email, username, password) {
-    const connection = await createConnection();
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    try {
-        const [result] = await connection.execute('INSERT INTO users (email, username, password) VALUES (?, ?, ?)', [email, username, hashedPassword]);
-        const token = generateToken(result.insertId); // Implement token logic
-        return { token, message: 'Registration successful' };
-    } catch (error) {
-        return { token: null, message: 'Registration failed: ' + error.message };
-    } finally {
-        await connection.end();
-    }
-}
+import { v4 as uuidv4 } from 'uuid';
 
 export async function login(email, password) {
     const connection = await createConnection();
 
-    try {
-        const [users] = await connection.execute('SELECT * FROM users WHERE email = ?', [email]);
+    const [users] = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
 
-        if (users.length > 0) {
-            const user = users[0];
-
-            const match = await bcrypt.compare(password, user.password);
-            if (match) {
-                const token = generateToken(user.id); // Implement token logic
-                return token;
-            }
-        }
-        return null; // Login failed
-    } finally {
-        await connection.end();
+    if (users.length === 0) {
+        return null;
     }
+
+    if (!(await bcrypt.compare(password, users[0].password_hash))) {
+        return null;
+    }
+
+    const token = uuidv4();
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 7);
+
+    await connection.execute(
+        'UPDATE users SET session_token = ?, session_expiration = ? WHERE id = ?',
+        [token, expires, users[0].id]
+    );
+
+    return token;
 }
 
-function generateToken(userId) {
-    // Your token generation logic
-    return userId; // Placeholder, implement JWT or similar logic
+export async function register(email, username, password) {
+    const connection = await createConnection();
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const [usersWithEmail] = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (usersWithEmail.length > 0) {
+        return { token: null, message: 'Email already in use' };
+    }
+
+    const [usersWithUsername] = await connection.query('SELECT * FROM users WHERE username = ?', [username]);
+    if (usersWithUsername.length > 0) {
+        return { token: null, message: 'Username already in use' };
+    }
+
+    await connection.execute(
+        'INSERT INTO users (email, username, password_hash) VALUES (?, ?, ?)',
+        [email, username, hashedPassword]
+    );
+
+    const token = uuidv4();
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 7);
+
+    await connection.execute(
+        'UPDATE users SET session_token = ?, session_expiration = ? WHERE email = ?',
+        [token, expires, email]
+    );
+
+    return { token, message: 'User created' };
 }

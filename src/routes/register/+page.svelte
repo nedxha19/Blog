@@ -1,6 +1,6 @@
-<!-- src/routes/register/+page.svelte -->
 <script>
 	let email = '';
+	let username = '';
 	let password = '';
 	let confirmPassword = '';
 	let message = '';
@@ -18,10 +18,11 @@
 		const response = await fetch('/register', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded' // Expected content type
+				'Content-Type': 'application/x-www-form-urlencoded'
 			},
 			body: new URLSearchParams({
 				email,
+				username, // Include username here
 				password
 			})
 		});
@@ -30,6 +31,7 @@
 			message = 'User registered successfully! You can now log in.';
 			// Clear fields after successful registration
 			email = '';
+			username = '';
 			password = '';
 			confirmPassword = '';
 		} else {
@@ -51,6 +53,15 @@
 			type="text"
 			bind:value={email}
 			id="email"
+			required
+			class="mb-4 w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+		/>
+
+		<label for="username" class="mb-2 block text-sm font-medium text-gray-700">Username</label>
+		<input
+			type="text"
+			bind:value={username}
+			id="username"
 			required
 			class="mb-4 w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
 		/>
@@ -78,8 +89,9 @@
 		<button
 			type="submit"
 			class="w-full rounded-lg bg-blue-500 p-3 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-			>Register</button
 		>
+			Register
+		</button>
 
 		{#if message}
 			<div class="mt-4 text-red-500">{message}</div>
