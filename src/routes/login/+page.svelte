@@ -13,7 +13,7 @@
 		</div>
 
 		<!-- No query string on the form: the default action is used -->
-		<form method="POST" use:enhance>
+		<form method="POST" action="?/login" use:enhance>
 			<div class="mb-6">
 				<label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email address</label
 				>

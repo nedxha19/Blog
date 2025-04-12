@@ -3,7 +3,7 @@ import { redirect } from '@sveltejs/kit';
 
 export const actions = {
     // Use the default action key
-    default: async ({ request, cookies }) => {
+    login: async ({ request, cookies }) => {
         const formData = await request.formData();
         const email = formData.get('email');
         const password = formData.get('password');
