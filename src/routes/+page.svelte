@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
-
+    export let data;
 	let user = null;
 
 	onMount(async () => {
@@ -167,9 +167,21 @@
 	</nav>
 
 	<!-- Main content -->
-	<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-		<slot />
-	</div>
+	<section class="p-6 bg-white">
+		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+		  {#each data.articles as article (article.id)}
+			<div>
+			  <img
+				src={article.image || '/placeholder.jpg'}
+				alt={article.description || 'Article image'}
+				class="w-full h-auto object-cover"
+				loading="lazy"
+			  />
+			</div>
+		  {/each}
+		</div>
+	  </section>
+	  
 
 	<!-- Footer -->
 	<footer class="bg-white">
