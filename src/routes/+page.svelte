@@ -3,7 +3,8 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
     export let data;
-	let user = null;
+	let user = data.user;
+	let comments = data.comments;
 
 	onMount(async () => {
 		if (browser) {
@@ -169,17 +170,40 @@
 	<!-- Main content -->
 	<section class="p-6 bg-white">
 		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-		  {#each data.articles as article (article.id)}
-			<div>
-			  <img
-				src={article.image || '/placeholder.jpg'}
-				alt={article.description || 'Article image'}
-				class="w-full h-auto object-cover"
-				loading="lazy"
-			  />
+			{#each data.articles as article (article.id)}
+			<div class="mb-4">
+			  <img src={article.image || '/placeholder.jpg'} alt={article.description || 'Article image'} />
+		  
+			  <!-- Kommentare zum Artikel -->
+			  <div class="mt-2 space-y-2 text-sm text-gray-700">
+				{#each comments.filter(c => c.article_id === article.id) as comment}
+				  <div class="border-b border-gray-200 pb-1">
+					<strong>{comment.author}:</strong> {comment.content}
+				  </div>
+				{/each}
+			  </div>
+		  
+			  <!-- Kommentarformular -->
+			  <form action="?/addComment" method="POST" use:enhance class="pt-3">
+				<input type="hidden" name="article_id" value={article.id} />
+				<input type="hidden" name="name" value={user.username} />
+				<div class="flex justify-between">
+				  <input
+					type="text"
+					name="commentInput"
+					placeholder="Add a comment..."
+					class="w-[80%] border-none bg-transparent p-0 text-sm text-gray-400 focus:outline-none"
+					required
+				  />
+				  <button type="submit" class="font-semibold text-blue-400 hover:text-blue-300">Post</button>
+				</div>
+			  </form>
 			</div>
 		  {/each}
+		  
 		</div>
+		
+	
 	  </section>
 	  
 
