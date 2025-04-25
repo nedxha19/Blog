@@ -1,6 +1,6 @@
-<!-- src/routes/homepage/+page.svelte -->
 <script>
 	export let data;
+	let articles = data.articles;
 
 	async function likeArticle(articleId) {
 		try {
@@ -10,12 +10,10 @@
 			});
 
 			if (response.ok) {
-				// Refresh the articles data
+				// Update the local state instead of reloading
 				const updatedArticlesResponse = await fetch('/api/articles');
 				const updatedArticles = await updatedArticlesResponse.json();
-				// You would typically update your local state here
-				// For simplicity, we're just reloading the page
-				location.reload();
+				articles = updatedArticles.articles;
 			} else {
 				const error = await response.json();
 				console.error('Error liking article:', error.message);
@@ -26,11 +24,11 @@
 	}
 </script>
 
-<section class="flex-1 lg:ml-[220px]">
+<section class="flex-1">
 	<div class="mx-auto min-h-screen bg-gradient-to-br from-zinc-900 to-black p-6 text-white">
 		<!-- Image Grid -->
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-			{#each data.articles as article (article.id)}
+			{#each articles as article (article.id)}
 				<div class="overflow-hidden rounded-2xl bg-zinc-800 shadow-md transition hover:shadow-xl">
 					<img
 						src={article.image || '/placeholder.jpg'}
@@ -43,7 +41,7 @@
 						<p class="text-xs text-gray-400">{article.description}</p>
 						<button
 							on:click={() => likeArticle(article.id)}
-							class="text-pink-500 hover:text-pink-400"
+							class="text-pink-500 transition-colors duration-300 hover:text-pink-400"
 						>
 							Like ({article.likes || 0})
 						</button>
