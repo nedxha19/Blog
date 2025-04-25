@@ -1,4 +1,3 @@
-// src/routes/admin/articles_management/+page.server.js
 import { createConnection } from '$lib/db/mysql';
 import { redirect } from '@sveltejs/kit';
 
@@ -24,6 +23,6 @@ export const actions = {
 
 		const connection = await createConnection();
 		await connection.execute('DELETE FROM articles WHERE id = ?', [id]);
-		await connection.end();
+
 	}
 };
