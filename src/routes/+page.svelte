@@ -64,6 +64,11 @@
 							class="h-48 w-full object-cover transition-opacity duration-300 hover:opacity-90"
 						/>
 
+						<div class="p-4">
+							<p class="mb-2 text-sm font-semibold text-[#FF4F00]">{article.author}</p>
+							<p class="mb-4 text-sm text-gray-300">{article.description}</p>
+						</div>
+
 						<!-- Comments section -->
 						<div class="mt-2 space-y-2 p-4 text-sm text-gray-300">
 							{#each comments.filter((c) => c.article_id === article.id) as comment}

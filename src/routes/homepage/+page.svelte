@@ -36,9 +36,9 @@
 						class="h-64 w-full object-cover"
 						loading="lazy"
 					/>
-					<div class="space-y-1 p-3">
+					<div class="space-y-2 p-4">
 						<p class="text-sm font-semibold text-pink-300">{article.author}</p>
-						<p class="text-xs text-gray-400">{article.description}</p>
+						<p class="line-clamp-3 text-sm text-gray-300">{article.description}</p>
 						<button
 							on:click={() => likeArticle(article.id)}
 							class="text-pink-500 transition-colors duration-300 hover:text-pink-400"
