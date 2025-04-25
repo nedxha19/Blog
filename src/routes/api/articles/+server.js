@@ -1,5 +1,4 @@
-
-// Import the function to connect to the database
+// Articles API server - Handles article data endpoints
 import { createConnection } from '$lib/db/mysql';
 
 // Handle GET request

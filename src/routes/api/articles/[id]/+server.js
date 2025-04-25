@@ -1,6 +1,7 @@
-// src/routes/api/articles/[id]/+server.js
+// Article ID API server - Handles individual article operations
 import { createConnection } from '$lib/db/mysql';
 
+// Handle GET request for specific article
 export async function GET({ params }) {
     const { id } = params;
 
@@ -11,6 +12,7 @@ export async function GET({ params }) {
             [id]
         );
 
+        // Check if article exists
         if (rows.length === 0) {
             return new Response(JSON.stringify({ message: 'Article not found' }), {
                 status: 404,
@@ -20,6 +22,7 @@ export async function GET({ params }) {
             });
         }
 
+        // Return article data
         return new Response(JSON.stringify(rows[0]), {
             status: 200,
             headers: {
@@ -27,6 +30,7 @@ export async function GET({ params }) {
             }
         });
     } catch (error) {
+        // Handle server errors
         return new Response(JSON.stringify({ message: 'Internal server error' }), {
             status: 500,
             headers: {
@@ -34,4 +38,4 @@ export async function GET({ params }) {
             }
         });
     }
-}
+}n

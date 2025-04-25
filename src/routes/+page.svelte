@@ -75,9 +75,9 @@
 								<div
 									class="border-b border-[#FF4F00]/20 pb-1 transition-colors duration-300 hover:bg-[#FF4F00]/5"
 								>
-									<strong class="text-[#FF4F00]">{comment.author}:</strong>
+	<strong class="text-[#FF4F00]">{comment.author}:</strong>
 									{comment.content}
-								</div>
+		</div>
 							{/each}
 						</div>
 
