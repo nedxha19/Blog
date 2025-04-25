@@ -198,6 +198,16 @@
 				  <button type="submit" class="font-semibold text-blue-400 hover:text-blue-300">Post</button>
 				</div>
 			  </form>
+			  <!-- Like button -->
+<form method="POST" action="?/likeArticle" class="mt-2" >
+	<input type="hidden" name="article_id" value={article.id} />
+	<button
+		type="submit"
+		class="text-sm font-semibold text-pink-500 hover:text-pink-400"
+	>
+		❤️ {article.votes} Likes
+	</button>
+</form>
 			</div>
 		  {/each}
 		  

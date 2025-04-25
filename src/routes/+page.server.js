@@ -9,7 +9,7 @@ export async function load({ locals }) {
     
 
     const connection = await createConnection();
-    const [articles] = await connection.execute('SELECT * FROM articles ORDER BY id DESC');
+    const [articles] = await connection.execute('SELECT * FROM articles ORDER BY id DESC limit 25');
     const [ comments ] = await connection.execute('SELECT * FROM comments ');
 
     return { articles, user:locals.user, comments: comments };
@@ -37,5 +37,17 @@ export const actions = {
             };
         
         
+    }, 
+    likeArticle: async ({ request }) => {
+        const formData = await request.formData();
+        const article_id = formData.get('article_id');
+    
+        const connection = await createConnection();
+        await connection.execute('UPDATE articles SET votes = votes + 1 WHERE id = ?', [article_id]);
+    
+        return {
+            success: true,
+            message: 'Liked!'
+        };
     }
 }

@@ -6,7 +6,10 @@ export async function GET({ params }) {
 
     try {
         const connection = await createConnection();
-        const [rows] = await connection.execute('SELECT * FROM articles WHERE id = ?', [id]);
+        const [rows] = await connection.execute(
+            'SELECT *, likes FROM articles WHERE id = ?',
+            [id]
+        );
 
         if (rows.length === 0) {
             return new Response(JSON.stringify({ message: 'Article not found' }), {
